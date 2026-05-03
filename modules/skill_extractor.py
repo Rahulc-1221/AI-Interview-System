@@ -1,4 +1,5 @@
 import re
+import ollama
 
 # Predefined technical skills database
 SKILLS_DB = [
@@ -20,7 +21,7 @@ SKILLS_DB = [
 ]
 
 
-def extract_skills(text):
+def extract_skills_db(text):
     """
     Extract skills from resume text using regex
     """
@@ -42,3 +43,9 @@ def extract_skills(text):
             extracted_skills.append(skill.title())
 
     return extracted_skills
+
+
+
+
+
+

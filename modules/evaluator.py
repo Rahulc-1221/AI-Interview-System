@@ -16,7 +16,7 @@ def evaluate_answers(questions, user_answers):
         else:
 
             results.append(
-                f"Q{i+1}: Wrong | Your Answer: {user_answers[i]} | Correct Answer: {correct_answer}"
+                f"Q{i+1}: Wrong!!!           |      Your Answer: {user_answers[i]}      |         Correct Answer: {correct_answer}"
             )
 
     return score, results

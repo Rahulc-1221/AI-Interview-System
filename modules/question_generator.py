@@ -13,7 +13,7 @@ def generate_questions(skills):
 
     # Strong prompt for consistent format
     prompt = f"""
-Generate exactly 5 beginner-friendly MCQ interview questions based ONLY on these skills:
+Generate exactly 20 MCQ interview questions based ONLY on these skills:
 {skills_text}
 
 STRICT RULES:
@@ -26,6 +26,8 @@ D.
 3. Add Correct Answer:
 4. Do NOT use numbering like 1. or 2.
 5. Do NOT add explanations.
+6. Do NOT repeat questions.
+7. Different from each questions.
 
 EXACT FORMAT:
 

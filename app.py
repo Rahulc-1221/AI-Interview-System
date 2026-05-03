@@ -2,21 +2,127 @@
 
 import streamlit as st
 from modules.resume_parser import extract_text_from_pdf
-from modules.skill_extractor import extract_skills
+from modules.skill_extractor import extract_skills_db
 from modules.question_generator import generate_questions
 from modules.evaluator import evaluate_answers
 from streamlit_option_menu import option_menu
 import base64              # For video
 from modules.aptitude_generator import generate_aptitude_questions      # Aptitude Test
+import time
+
+
+
+# Performance tracker 
+
+
+
+if "technical_score" not in st.session_state:
+    st.session_state.technical_score = 0
+
+if "aptitude_score" not in st.session_state:
+    st.session_state.aptitude_score = 0
+
+if "progress_history" not in st.session_state:
+    st.session_state.progress_history = []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Performance tracker
+
+if "technical_score" not in st.session_state:
+    st.session_state.technical_score = 0
+
+if "aptitude_score" not in st.session_state:
+    st.session_state.aptitude_score = 0
+
+if "progress_history" not in st.session_state:
+    st.session_state.progress_history = []
+
+# NEW OPTIONAL METRICS
+if "total_tests" not in st.session_state:
+    st.session_state.total_tests = 0
+
+if "best_score" not in st.session_state:
+    st.session_state.best_score = 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 with st.sidebar:
     menu_bar=option_menu(
     menu_title="MENU",
-    options=("Home","Practice Zone","Aptitude Test","HelpBot","AboutUs"),
-    icons=("house","mortarboard","robot","info-circle"),
-    # icons=("house","mortarboard","bar-chart","robot","info-circle"),
+    options=("Home","Resume Vision","Practice Zone","Aptitude Test","Dashboard","HelpBot","AboutUs"),
+    icons=( "house","file-earmark-person","laptop","patch-question","bar-chart-line","robot","info-circle"),
     menu_icon="menu-button-wide",
     default_index=0,
     )
@@ -28,26 +134,58 @@ with st.sidebar:
 
 if menu_bar=="Home":
 
-#     # Title shows lot more big text but html doesnt
-
-#     st.markdown(
-#     """
-#     <h1 style='font-size:38px; margin-bottom:0;'>
-#          AI-Powered Interview Preparation System
-#     </h1>
-#     """,
-#     unsafe_allow_html=True
-# )
-
+# 🎯 AI-Powered Adaptive Interview Preparation System
     # Tagline :
 
 
-    st.markdown("""
-    <h1 style='text-align: center;'>🎯 AI-Powered Adaptive Interview Preparation System</h1>
-    <h3 style='text-align: center; color: gray;'>
-    Practice smarter. Crack interviews faster with AI.
-    </h3>
+# Simple Professional Interactive Title
+
+    st.markdown(""" 
+    <style>
+    .simple-hero-card {
+        background: linear-gradient(135deg, #203a43, #2c5364);
+        padding: 25px;
+        border-radius: 18px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    }
+
+    .simple-hero-title {
+        font-size: 34px;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 8px;
+    }
+
+    .simple-hero-subtitle {
+        font-size: 16px;
+        color: #dcdcdc;
+        font-style: italic;
+    }
+    </style>
+
+    <div class="simple-hero-card">
+        <div class="simple-hero-title">🎯 AI-Powered Adaptive Interview Preparation System</div>
+        <div class="simple-hero-subtitle">
+            Practice smarter • Build confidence • Crack interviews faster
+        </div>
+    </div>
     """, unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     # Project snapshot
@@ -73,21 +211,6 @@ if menu_bar=="Home":
         🌍 **Target Users**  
         Students • Freshers • Graduates • Professionals
         """)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -146,27 +269,337 @@ if menu_bar=="Home":
     # =========================================================
     # ABOUT THE PROJECT
     # =========================================================
-    st.header("📖 About the Project")
+    # ==========================================
+    # INTERACTIVE WELCOME / OVERVIEW SECTION
+    # ==========================================
 
     st.markdown("""
-    The **AI-Powered Adaptive Interview Preparation System** is an intelligent career-readiness solution
-    built to address the limitations of traditional interview preparation methods.
+    <style>
+    .overview-card {
+        background: linear-gradient(135deg, #f8fbff, #eaf3ff);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
 
-    Unlike generic platforms, this system personalizes the learning experience by analyzing user resumes,
-    identifying domain-specific skills, and generating customized technical, HR, and aptitude interview questions.
+    .overview-title {
+        text-align: center;
+        font-size: 34px;
+        font-weight: 800;
+        color: #203a43;
+        margin-bottom: 20px;
+    }
 
-    It functions as a complete interview ecosystem where users can:
-    - Upload resumes for skill-based profiling  
-    - Practice personalized mock interviews  
-    - Strengthen aptitude and reasoning  
-    - Receive AI-powered feedback  
-    - Track growth through analytics dashboards
+    .highlight-box {
+        background: white;
+        padding: 18px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: 0.3s;
+        height: 100%;
+    }
+
+    .highlight-box:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }
+
+    .highlight-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f2027;
+        margin-bottom: 8px;
+    }
+
+    .highlight-desc {
+        font-size: 15px;
+        color: #555;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="overview-card">
+        <div class="overview-title">🚀 Journey to Interview Success</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("""
+    ### This platform helps you prepare smarter by combining:
+    - **Resume Analysis** → Understand profile quality & ATS readiness  
+    - **Technical Practice** → Personalized interview questions from your skills  
+    - **Aptitude Training** → Quantitative + logical reasoning improvement  
+    - **Performance Dashboard** → Compare strengths & weaknesses  
+    - **AI HelpBot** → Instant career and interview support  
     """)
 
+    # Interactive Metric Cards
+    col1, col2, col3, col4 = st.columns(4)
 
+    with col1:
+        st.markdown("""
+        <div class="highlight-box">
+            <div class="highlight-title">📄 Resume Ready</div>
+            <div class="highlight-desc">Analyze and strengthen your professional profile</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div class="highlight-box">
+            <div class="highlight-title">💻 Technical Growth</div>
+            <div class="highlight-desc">Skill-based AI interview preparation</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+        <div class="highlight-box">
+            <div class="highlight-title">🧠 Aptitude Mastery</div>
+            <div class="highlight-desc">Boost reasoning and placement confidence</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col4:
+        st.markdown("""
+        <div class="highlight-box">
+            <div class="highlight-title">📊 Smart Analytics</div>
+            <div class="highlight-desc">Track performance and career readiness</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # Interactive Expanders
+    st.subheader("🎯 Explore What You Can Do")
+
+    with st.expander("📄 Resume Vision"):
+        st.write("Upload your resume to evaluate ATS score, profile quality, and missing career sections.")
+
+    with st.expander("💻 Practice Zone"):
+        st.write("Generate technical interview questions based on your extracted skills.")
+
+    with st.expander("🧠 Aptitude Test"):
+        st.write("Practice quantitative aptitude and logical reasoning for placement success.")
+
+    with st.expander("📈 Dashboard"):
+        st.write("Compare Practice Zone and Aptitude performance to identify strengths and weaknesses.")
+
+    with st.expander("🤖 HelpBot"):
+        st.write("Ask interview questions, coding doubts, aptitude concepts, and career guidance.")
 
 
     
+
+
+
+
+
+elif menu_bar=="Resume Vision":
+    st.title("📄 Resume Viewer & Analyzer")
+    st.subheader("Upload your resume and analyze its content")
+
+    # Upload Resume
+    uploaded_file = st.file_uploader(
+        "Upload Your Resume (PDF Only)",
+        type=["pdf"]
+    )
+
+    if uploaded_file:
+
+        # ==================================
+        # STEP 1: Extract Full Resume Text
+        # ==================================
+        resume_text = extract_text_from_pdf(uploaded_file)
+
+        # ==================================
+        # STEP 2: Extract Skills
+        # ==================================
+
+
+
+
+
+
+
+        # skills = extract_skills_db(resume_text)
+
+
+
+
+
+
+
+
+
+
+
+        # ==================================
+        # STEP 3: Resume Score Logic
+        # ==================================
+        score = 0
+        feedback = []
+
+        # Contact Info
+        if "@" in resume_text:
+            score += 10
+        else:
+            feedback.append("Add email address.")
+
+        if "linkedin" in resume_text.lower():
+            score += 5
+        else:
+            feedback.append("Add LinkedIn profile.")
+
+        if "github" in resume_text.lower():
+            score += 5
+        else:
+            feedback.append("Add GitHub profile.")
+
+
+
+
+
+
+
+
+
+        # Skills
+        # if len(skills) >= 5:
+            # score += 20
+        # elif len(skills) >= 3:
+            # score += 15
+        # else:
+        #     score += 5
+            # feedback.append("Add more technical skills.")
+
+
+
+
+
+
+
+
+
+        # Education
+        if "education" in resume_text.lower():
+            score += 15
+        else:
+            feedback.append("Add education section.")
+
+        # Projects
+        if "project" in resume_text.lower():
+            score += 15
+        else:
+            feedback.append("Add project section.")
+
+        # Experience
+        if "experience" in resume_text.lower() or "internship" in resume_text.lower():
+            score += 15
+        else:
+            feedback.append("Add internship/experience.")
+
+        # Certifications
+        if "certification" in resume_text.lower() or "certifications" in resume_text.lower():
+            score += 15
+        else:
+            feedback.append("Add certifications.")
+
+        # ==================================
+        # STEP 4: Display Resume Score
+        # ==================================
+        st.success(f"📊 Resume Score: {score}/100")
+
+        st.progress(score)
+
+        # ==================================
+        # STEP 5: Show Detected Skills
+        # ==================================
+
+
+
+
+
+
+
+        # st.subheader("💻 Detected Skills")
+
+        # if skills:
+        #     for skill in skills:
+        #         st.write(f"✅ {skill}")
+
+
+
+
+
+
+
+
+
+
+        # else:
+        #     st.warning("No predefined skills detected.")
+
+
+
+
+
+
+
+
+
+
+        # ==================================
+        # STEP 6: Missing Sections / Feedback
+        # ==================================
+        st.subheader("📌 Improvement Suggestions")
+
+        if feedback:
+            for item in feedback:
+                st.warning(item)
+        else:
+            st.success("Excellent Resume! Your resume looks strong.")
+
+        # ==================================
+        # STEP 7: Resume Summary
+        # ==================================
+        st.subheader("📝 Resume Summary")
+
+
+
+
+
+
+        st.info(
+            # f"This resume contains {len(skills)} detected technical skills "
+
+
+
+
+
+            f"Overall ATS-style score : {score}/100."
+        )
+
+
+
+        # ==================================
+        # STEP 8: View Full Resume
+        # ==================================
+        with st.expander("📃 View Full Resume Content"):
+            st.write(resume_text)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -200,6 +633,8 @@ elif menu_bar=="Practice Zone":
     # st.subheader("Upload Resume • Extract Skills • Practice MCQs")
 
 
+
+
     st.write("")
     st.write("")
 
@@ -210,6 +645,9 @@ elif menu_bar=="Practice Zone":
     if "questions" not in st.session_state:
         st.session_state.questions = []
 
+
+
+
     # If resume uploaded
     if uploaded_file:
     
@@ -217,7 +655,7 @@ elif menu_bar=="Practice Zone":
         resume_text = extract_text_from_pdf(uploaded_file)
 
         # Step 2: Extract skills
-        skills = extract_skills(resume_text)
+        skills = extract_skills_db(resume_text)
 
         # Show extracted skills
         st.subheader("💻 Extracted Skills")
@@ -226,13 +664,24 @@ elif menu_bar=="Practice Zone":
             for skill in skills:
                 st.write(f"✅ {skill}")
         else:
-            st.warning("No predefined skills found.")
+            st.warning("No skills found.")
 
         # Step 3: Generate questions
         if skills and st.button("Generate Questions"):
 
             with st.spinner("Please wait...."):
                 st.session_state.questions = generate_questions(skills)
+
+
+
+                                                         
+                
+
+
+
+
+
+
 
     # Store user answers
     user_answers = []
@@ -277,9 +726,29 @@ elif menu_bar=="Practice Zone":
                     valid_questions,
                     user_answers
                 )
+                
+                # Convert to percentage
+                technical_percent = int((score / len(valid_questions)) * 100)
 
+                # Store technical score
+                st.session_state.technical_score = technical_percent
+
+                # Track total tests
+                st.session_state.total_tests += 1
+
+                # Best score tracker
+                if technical_percent > st.session_state.best_score:
+                    st.session_state.best_score = technical_percent
+
+                # Progress history
+                st.session_state.progress_history.append({
+                    "type": "Technical",
+                    "score": technical_percent
+                })
+
+                # Show result
                 st.success(
-                    f"Your Score: {score}/{len(valid_questions)}"
+                    f"Your Score: {score}/{len(valid_questions)} ({technical_percent}%)"
                 )
 
                 st.subheader("Results")
@@ -304,7 +773,7 @@ elif menu_bar=="Aptitude Test":
     # Category Selection
     category = st.selectbox(
         "Choose Aptitude Category",
-        ["Quantitative Aptitude", "Logical Reasoning", "Verbal Ability"]
+        ["Quantitative Aptitude", "Logical Reasoning"]
     )
 
     # Session state
@@ -356,7 +825,54 @@ elif menu_bar=="Aptitude Test":
                     user_answers
                 )
 
-                st.success(f"Your Score: {score}/{len(valid_questions)}")
+                # st.success(f"Your Score: {score}/{len(valid_questions)}")
+
+
+
+
+
+                aptitude_percent = int((score / len(valid_questions)) * 100)
+
+                # Save aptitude score
+                st.session_state.aptitude_score = aptitude_percent
+
+                # Track history
+                st.session_state.total_tests += 1
+
+                if aptitude_percent > st.session_state.best_score:
+                    st.session_state.best_score = aptitude_percent
+
+                st.session_state.progress_history.append({
+                    "type": "Aptitude",
+                    "score": aptitude_percent
+                })
+
+                st.success(f"Your Score: {score}/{len(valid_questions)} ({aptitude_percent}%)")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 st.subheader("Results")
 
@@ -375,6 +891,138 @@ elif menu_bar=="Aptitude Test":
 
 
 
+
+
+
+elif menu_bar=="Dashboard":
+    import plotly.express as px
+    import pandas as pd
+
+    st.title("📊 Performance Dashboard")
+    st.subheader("AI-Based Comparative Performance Analysis")
+
+    # =========================
+    # SCORES
+    # =========================
+    technical_score = st.session_state.get("technical_score", 0)
+    aptitude_score = st.session_state.get("aptitude_score", 0)
+
+    overall_score = int((technical_score + aptitude_score) / 2)
+
+    # =========================
+    # TOP METRICS
+    # =========================
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric("🎯 Overall Score", f"{overall_score}%")
+
+    with col2:
+        stronger_area = "Practice Zone" if technical_score > aptitude_score else "Aptitude Test"
+        st.metric("💪 Stronger Area", stronger_area)
+
+    with col3:
+        weaker_area = "Practice Zone" if technical_score < aptitude_score else "Aptitude Test"
+        st.metric("⚠️ Weak Area", weaker_area)
+
+    st.progress(overall_score)
+
+    st.markdown("---")
+
+    # =========================
+    # DATAFRAME
+    # =========================
+    performance_data = pd.DataFrame({
+        "Category": ["Practice Zone", "Aptitude Test"],
+        "Score": [technical_score, aptitude_score]
+    })
+
+    # =========================
+    # BAR CHART
+    # =========================
+    st.subheader("📈 Practice Zone vs Aptitude Comparison")
+
+    fig_bar = px.bar(
+        performance_data,
+        x="Category",
+        y="Score",
+        text="Score",
+        title="Performance Comparison"
+    )
+
+    st.plotly_chart(fig_bar, use_container_width=True)
+
+    # =========================
+    # PIE CHART
+    # =========================
+    st.subheader("🥧 Performance Distribution")
+
+    fig_pie = px.pie(
+        performance_data,
+        names="Category",
+        values="Score",
+        title="Score Distribution"
+    )
+
+    st.plotly_chart(fig_pie, use_container_width=True)
+
+    # =========================
+    # STRENGTHS & WEAKNESSES
+    # =========================
+    st.subheader("💪 Strengths & Weaknesses Analysis")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.success("Your Strengths")
+
+        if technical_score >= 70:
+            st.write("✅ Strong technical/problem-solving skills")
+
+        if aptitude_score >= 70:
+            st.write("✅ Good aptitude and reasoning ability")
+
+        if technical_score < 70 and aptitude_score < 70:
+            st.write("⚠️ No strong area yet — keep practicing")
+
+    with col2:
+        st.warning("Areas to Improve")
+
+        if technical_score < 70:
+            st.write("⚠️ Improve coding, technical MCQs, and resume-based questions")
+
+        if aptitude_score < 70:
+            st.write("⚠️ Improve quantitative aptitude, logical reasoning, and verbal ability")
+
+    st.markdown("---")
+
+    # =========================
+    # FINAL ANALYSIS
+    # =========================
+    st.subheader("🤖 AI Career Readiness Analysis")
+
+    if overall_score >= 80:
+        st.success("🚀 Excellent! You are highly interview-ready.")
+
+    elif overall_score >= 60:
+        st.info("📘 Good progress. Focus on weaker section to become placement ready.")
+
+    else:
+        st.error("⚠️ You need more structured preparation in both sections.")
+
+    # =========================
+    # PERSONALIZED RECOMMENDATION
+    # =========================
+    if technical_score > aptitude_score:
+        st.info("💡 Recommendation: You are stronger technically. Focus more on aptitude rounds for placements.")
+
+    elif aptitude_score > technical_score:
+        st.info("💡 Recommendation: You are good at aptitude. Improve technical interviews for better hiring chances.")
+
+    else:
+        st.info("💡 Balanced profile. Continue improving both equally.")
+
+            
 
 
 
@@ -552,4 +1200,112 @@ elif menu_bar=="HelpBot":
 
 
 elif menu_bar=="AboutUs":
-    st.title("About")
+
+    st.title("ℹ️ About Us")
+
+    st.subheader("🎯 AI-Powered Adaptive Interview Preparation System")
+
+    st.write("""
+    The AI-Powered Adaptive Interview Preparation System is a smart career-readiness platform
+    designed to help students, freshers, graduates, and professionals prepare for interviews
+    in a more personalized and effective way.
+    """)
+
+    st.markdown("---")
+
+    # ==========================================
+    # WHO WE ARE
+    # ==========================================
+    st.header("🚀 Who We Are")
+
+    st.write("""
+    We aim to transform traditional interview preparation by combining Artificial Intelligence,
+    resume analysis, technical practice, aptitude training, and performance analytics
+    into one complete system.
+    """)
+
+    st.markdown("---")
+
+    # ==========================================
+    # OUR MISSION
+    # ==========================================
+    st.header("🌟 Our Mission")
+
+    st.write("""
+    Our mission is to bridge the gap between learning and hiring by providing users with:
+    """)
+
+    st.write("✅ Resume Analysis for ATS readiness")
+    st.write("✅ Skill-based Technical Interview Practice")
+    st.write("✅ Aptitude & Logical Reasoning Preparation")
+    st.write("✅ Performance Dashboard for growth tracking")
+    st.write("✅ AI HelpBot for interview and career guidance")
+
+    st.markdown("---")
+
+    # ==========================================
+    # KEY FEATURES
+    # ==========================================
+    st.header("💡 Key Features")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.info("""
+        📄 Resume Vision  
+        Upload and analyze your resume to improve profile strength
+        """)
+
+        st.info("""
+        💻 Practice Zone  
+        Practice technical questions based on your skills
+        """)
+
+    with col2:
+        st.info("""
+        🧠 Aptitude Test  
+        Improve quantitative aptitude and logical reasoning
+        """)
+
+        st.info("""
+        📊 Dashboard  
+        Track strengths, weaknesses, and interview readiness
+        """)
+
+    st.markdown("---")
+
+    # ==========================================
+    # TARGET USERS
+    # ==========================================
+    st.header("🌍 Who Can Use This Platform?")
+
+    st.write("🎓 Students preparing for placements")
+    st.write("💼 Freshers starting career journeys")
+    st.write("📚 Graduates improving interview skills")
+    st.write("🚀 Professionals upgrading opportunities")
+
+    st.markdown("---")
+
+    # ==========================================
+    # TECHNOLOGY
+    # ==========================================
+    st.header("🛠️ Technologies Used")
+
+    st.write("""
+    Python • Streamlit • Resume Parsing • Skill Extraction • AI Models • Performance Analytics
+    """)
+
+    st.markdown("---")
+
+    # ==========================================
+    # VISION
+    # ==========================================
+    st.header("🏆 Our Vision")
+
+    st.success("""
+    To make interview preparation smarter, personalized, and accessible for everyone.
+    """)
+
+    st.markdown("---")
+
+    st.subheader("🌟 Prepare Better Today. Succeed Bigger Tomorrow.")
